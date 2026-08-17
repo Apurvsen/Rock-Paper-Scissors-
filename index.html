@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors – AI Hand Gesture</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- MediaPipe Hands + Camera Utils (CDN, no WASM server needed) -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/hands.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1640029074/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3.1620248257/drawing_utils.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="app-container">
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-brand">
+            <span class="brand-emojis">✊ ✋ ✌️</span>
+            <h1>Rock Paper Scissors</h1>
+            <span class="badge">AI Camera</span>
+        </div>
+        <p class="header-sub">Show your hand gesture to the camera and beat the computer!</p>
+    </header>
+
+    <!-- Scoreboard -->
+    <section class="scoreboard">
+        <div class="score-card you-card">
+            <span class="score-label">YOU</span>
+            <span class="score-number" id="scorePlayer">0</span>
+        </div>
+        <div class="score-card draw-card">
+            <span class="score-label">DRAWS</span>
+            <span class="score-number" id="scoreDraw">0</span>
+        </div>
+        <div class="score-card cpu-card">
+            <span class="score-label">COMPUTER</span>
+            <span class="score-number" id="scoreCPU">0</span>
+        </div>
+        <div class="score-card streak-card">
+            <span class="score-label">WIN STREAK</span>
+            <span class="score-number" id="scoreStreak">🔥 0</span>
+        </div>
+    </section>
+
+    <!-- Battle Arena -->
+    <main class="arena">
+
+        <!-- Player Panel -->
+        <div class="panel player-panel">
+            <div class="panel-top">
+                <div class="panel-title">
+                    <span class="dot" id="camDot"></span>
+                    Your Camera
+                </div>
+                <div class="gesture-pill" id="gesturePill">
+                    <span id="gestureEmoji">🔍</span>
+                    <span id="gestureLabel">Initializing…</span>
+                </div>
+            </div>
+
+            <!-- Video container: video and canvas stacked -->
+            <div class="cam-box" id="camBox">
+                <video id="video" autoplay playsinline muted></video>
+                <canvas id="canvas"></canvas>
+                <!-- Loading overlay -->
+                <div class="cam-overlay" id="camOverlay">
+                    <div class="loader"></div>
+                    <p id="camMsg">Loading AI model…<br><small>First load may take 5–10 seconds</small></p>
+                </div>
+                <!-- Freeze overlay shown at round end -->
+                <div class="freeze-overlay" id="freezeOverlay">
+                    <span id="freezeEmoji"></span>
+                </div>
+            </div>
+
+            <div class="cam-controls">
+                <button id="btnMirror" class="btn btn-sm">🔄 Mirror</button>
+                <button id="btnToggleCam" class="btn btn-sm">📹 Toggle Camera</button>
+            </div>
+        </div>
+
+        <!-- Center Panel -->
+        <div class="panel center-panel">
+            <div class="vs-label">VS</div>
+
+            <div class="battle-info">
+                <div class="countdown" id="countdown" style="display:none">
+                    <span id="cdNumber">3</span>
+                </div>
+                <div class="result-box" id="resultBox">
+                    <span class="result-title" id="resultTitle">Ready?</span>
+                    <span class="result-sub" id="resultSub">Show hand gesture and click PLAY ROUND!</span>
+                </div>
+            </div>
+
+            <div class="center-actions">
+                <button class="btn btn-play" id="btnPlay" disabled>▶ PLAY ROUND</button>
+                <div class="small-actions">
+                    <button class="btn btn-sm" id="btnAuto">⚡ Auto: OFF</button>
+                    <button class="btn btn-sm" id="btnReset">🗑️ Reset</button>
+                    <button class="btn btn-icon" id="btnSound">🔊</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Computer Panel -->
+        <div class="panel cpu-panel">
+            <div class="panel-top">
+                <div class="panel-title">🤖 Computer</div>
+                <div class="cpu-badge" id="cpuBadge">Waiting…</div>
+            </div>
+            <div class="cpu-card">
+                <span class="cpu-avatar">🤖</span>
+                <span class="cpu-move" id="cpuMove">❓</span>
+                <span class="cpu-label" id="cpuLabel">Waiting for you</span>
+            </div>
+            <div class="cpu-stat">AI Mode: <strong>Fair Random</strong></div>
+        </div>
+
+    </main>
+
+    <!-- Hidden elements kept for JS compatibility -->
+    <span id="gRock" style="display:none"></span>
+    <span id="gPaper" style="display:none"></span>
+    <span id="gScissors" style="display:none"></span>
+    <span id="histCount" style="display:none"></span>
+    <div id="histList" style="display:none"></div>
+
+    <footer class="footer">Rock Paper Scissors AI · MediaPipe Hand Detection</footer>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
